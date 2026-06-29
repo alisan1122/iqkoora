@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IQ KOORA - منصتك الأولى لمتابعة نتائج ومباريات كرة القدم بث حي ومباشر مع مشغل HLS">
+    <title>IQ KOORA | تغطية مباشرة ومشغل البث المباشر</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- HLS.js Library for Live Stream Playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- ملف التنسيق -->
+    <link rel="stylesheet" href="stayle.css">
+</head>
+
+<body>
+
+    <!-- خلفيات وأشكال متدرجة مضاءة -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+    <div class="bg-grid"></div>
+
+    <div class="app-container">
+        
+        <!-- الشريط العلوي المباشر -->
+        <div class="top-bar">
+            <div class="live-indicator">
+                <span class="pulse-dot"></span>
+                <span>مباشر  </span>
+            </div>
+            <div class="stats-pill" id="matches-count-pill">
+                جاري التحديث...
+            </div>
+        </div>
+
+        <!-- الهيدر الرئيسي -->
+        <header class="navbar">
+            <div class="logo-wrapper">
+                <div class="logo-icon">⚽</div>
+                <div class="logo">
+                    <span class="logo-iq">IQ</span>
+                    <span class="logo-koora">KOORA</span>
+                </div>
+            </div>
+            <p class="subtitle">وجهتك الأولى والحديثة لمتابعة نتائج وشغف كرة القدم مع البث المباشر High-Definition</p>
+        </header>
+
+        <!-- نافذة التحكم والأزرار الرئيسية -->
+        <div class="controls-wrapper">
+            <!-- تبويبات الأيام -->
+            <nav class="tabs-container">
+                <button class="tab-btn" data-target="yesterday">
+                    مباريات الأمس
+                </button>
+                <button class="tab-btn active" data-target="today">
+                    مباريات اليوم
+                </button>
+                <button class="tab-btn" data-target="tomorrow">
+                    مباريات الغد
+                </button>
+            </nav>
+
+            <!-- شريط البحث السريع والإنعاش -->
+            <div class="search-and-actions">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="ابحث عن فريق أو بطولة...">
+                </div>
+                <button id="refresh-btn" class="refresh-btn" title="تحديث البيانات">
+                    <span class="refresh-icon">🔄</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- فلتر الدوريات المباشرة -->
+        <div class="league-filters" id="league-filters">
+            <button class="filter-chip active" data-league="all">الكل</button>
+            <button class="filter-chip" data-league="دوري أبطال أوروبا">دوري الأبطال</button>
+            <button class="filter-chip" data-league="الدوري الإنجليزي">الدوري الإنجليزي</button>
+            <button class="filter-chip" data-league="الدوري الإسباني">الدوري الإسباني</button>
+            <button class="filter-chip" data-league="الدوري السعودي">الدوري السعودي</button>
+            <button class="filter-chip" data-league="كأس العالم">كأس العالم</button>
+        </div>
+
+        <!-- بطاقات المباريات -->
+        <main class="matches-container" id="matches-container">
+        </main>
+
+        <!-- الفوتر -->
+        <footer class="footer">
+            <p>© 2026 <strong>IQ KOORA</strong> - جميع الحقوق محفوظة | مشغل البث المباشر مدعوم بتقنية HLS.js</p>
+        </footer>
+    </div>
+
+    <!-- نافذة مشغل البث المباشر HLS Modal -->
+    <div id="player-modal" class="player-modal">
+        <div class="player-modal-content">
+            <div class="player-header">
+                <div class="player-title-group">
+                    <span class="live-tag">بث مباشر HD</span>
+                    <h3 id="player-match-title">المباراة المباشرة</h3>
+                </div>
+                <button id="close-player-btn" class="close-modal-btn">&times;</button>
+            </div>
+
+            <div class="video-wrapper">
+                <video id="hls-video-player" controls playsinline poster="photo/bg.jpg"></video>
+                <iframe id="iframe-video-player" src="" style="display:none;" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                <div id="video-loader" class="video-loader hidden">
+                    <div class="spinner"></div>
+                    <p id="loader-text">جاري تحميل البث المباشر...</p>
+                </div>
+            </div>
+
+            <div class="server-selection">
+                <span class="server-label">اختر سيرفر البث:</span>
+                <div class="server-buttons">
+                    <button class="server-btn active" data-stream="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">سيرفر 1 (1080p Full HD)</button>
+                    <button class="server-btn" data-stream="https://multiplatform-f.akamaihd.net/i/multi/will/bbb/big_buck_bunny_,640x360_400,1000x576_800,1280x720_1200,1920x1080_1500,.mp4.csmil/master.m3u8">سيرفر 2 (720p HD)</button>
+                    <button class="server-btn" data-stream="https://demo.unified-streaming.com/k8s/live/stable/scte35.isml/.m3u8">سيرفر 3 (480p SD)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ملف الجافا سكريبت -->
+    <script src="java.js"></script>
+</body>
+
+</html>

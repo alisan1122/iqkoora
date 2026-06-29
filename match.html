@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IQ KOORA - تفاصيل المباراة والبث المباشر">
+    <title>IQ KOORA | تفاصيل المباراة والبث المباشر</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- ملف التنسيق الرئيسي -->
+    <link rel="stylesheet" href="stayle.css">
+
+    <style>
+        /* التنسيقات الخاصة بصفحة تفاصيل المباراة */
+        .match-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .back-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all var(--transition-speed) ease;
+            backdrop-filter: blur(12px);
+        }
+
+        .back-btn:hover {
+            background: var(--accent-1);
+            border-color: var(--accent-1);
+            box-shadow: var(--shadow-glow);
+            transform: translateX(5px);
+        }
+
+        .match-hero-card {
+            background: linear-gradient(145deg, rgba(20, 30, 55, 0.7), rgba(10, 15, 30, 0.85));
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .match-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-glow), var(--accent-1), var(--accent-3));
+        }
+
+        .match-hero-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .hero-team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 38%;
+        }
+
+        .hero-team-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            padding: 0.8rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-team-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .hero-score-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .hero-score-numbers {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.4rem 1.8rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-score-numbers.not-started {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* تفاصيل إضافية للمباراة */
+        .match-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            width: 100%;
+        }
+
+        .info-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.2rem 1.4rem;
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .info-icon {
+            font-size: 2rem;
+            background: rgba(76, 201, 240, 0.12);
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(76, 201, 240, 0.2);
+        }
+
+        .info-text label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-text span {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* قسم البث المباشر الخاص بالصفحة */
+        .page-player-section {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(10, 15, 30, 0.95));
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 1.8rem;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .player-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- خلفيات مضاءة -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+    <div class="bg-grid"></div>
+
+    <div class="match-page-container">
+
+        <!-- شريط الرجوع واللوجو -->
+        <nav class="back-nav">
+            <a href="index.html" class="back-btn">
+                <span>← العودة للمباريات</span>
+            </a>
+            <div class="logo" style="font-size: 2.2rem;">
+                <span class="logo-iq">IQ</span>
+                <span class="logo-koora">KOORA</span>
+            </div>
+        </nav>
+
+        <!-- بطاقة المباراة الرئيسية -->
+        <div class="match-hero-card">
+            <div class="match-header" style="width: 100%; border-bottom: none; padding-bottom: 0;">
+                <div class="league-info">
+                    <span id="page-league-name" style="font-size: 1.1rem; color: var(--accent-glow);">البطولة</span>
+                </div>
+                <div id="page-match-status" class="match-status status-time" style="font-size: 0.9rem; padding: 0.4rem 1.2rem;">
+                    جاري التحميل...
+                </div>
+            </div>
+
+            <div class="match-hero-teams">
+                <div class="hero-team">
+                    <div id="page-team1-logo" class="hero-team-logo">⚽</div>
+                    <div id="page-team1-name" class="hero-team-name">الفريق الأول</div>
+                </div>
+
+                <div class="hero-score-box">
+                    <div id="page-score-container" class="hero-score-numbers">
+                        <span>0</span>
+                        <span class="score-dash">-</span>
+                        <span>0</span>
+                    </div>
+                    <div id="page-match-date" class="match-date" style="font-size: 0.95rem;">التاريخ</div>
+                </div>
+
+                <div class="hero-team">
+                    <div id="page-team2-logo" class="hero-team-logo">⚽</div>
+                    <div id="page-team2-name" class="hero-team-name">الفريق الثاني</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- شبكة تفاصيل المباراة والمعلومات -->
+        <div class="match-info-grid">
+            <div class="info-card">
+                <div class="info-icon">📺</div>
+                <div class="info-text">
+                    <label>القناة الناقلة</label>
+                    <span id="info-channel">beIN Sports HD 1</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">🎙️</div>
+                <div class="info-text">
+                    <label>المعلق الصوتي</label>
+                    <span id="info-commentator">حفيظ دراجي</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon">⏱️</div>
+                <div class="info-text">
+                    <label>التوقيت Local</label>
+                    <span id="info-time">حسب التوقيت المحلي</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- مشغل البث المباشر HLS -->
+        <div class="page-player-section">
+            <div class="player-section-header">
+                <div class="player-title-group">
+                    <span class="live-tag">البث المباشر HD</span>
+                    <h3 id="page-stream-title">مشغل المباراة المباشر</h3>
+                </div>
+            </div>
+
+            <div class="video-wrapper">
+                <video id="page-video-player" controls playsinline></video>
+                <iframe id="page-iframe-player" src="" style="display:none;" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                <div id="page-video-loader" class="video-loader hidden">
+                    <div class="spinner"></div>
+                    <p id="page-loader-text">جاري الاتصال بسيرفر البث المباشر...</p>
+                </div>
+            </div>
+
+            <div class="server-selection">
+                <span class="server-label">اختر جودة أو سيرفر البث:</span>
+                <div class="server-buttons">
+                    <button class="server-btn active" data-stream="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">سيرفر 1 (1080p Full HD)</button>
+                    <button class="server-btn" data-stream="https://multiplatform-f.akamaihd.net/i/multi/will/bbb/big_buck_bunny_,640x360_400,1000x576_800,1280x720_1200,1920x1080_1500,.mp4.csmil/master.m3u8">سيرفر 2 (720p HD)</button>
+                    <button class="server-btn" data-stream="https://demo.unified-streaming.com/k8s/live/stable/scte35.isml/.m3u8">سيرفر 3 (480p SD)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- الفوتر -->
+        <footer class="footer">
+            <p>© 2026 <strong>IQ KOORA</strong> - جميع حقوق البث والتغطية محفوظة</p>
+        </footer>
+    </div>
+
+    <!-- ملف جافا سكريبت الخاص بالصفحة -->
+    <script src="match.js"></script>
+</body>
+
+</html>
